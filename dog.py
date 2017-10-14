@@ -1,7 +1,5 @@
 import urllib2
 import re
-from bs4 import BeautifulSoup
-
 
 # response = urllib2.urlopen("http://catalog.registrar.ucla.edu/ucla-catalog2017-348.html")
 
@@ -35,8 +33,13 @@ ofile=open("result.txt", "w")
 
 for url in urlist:
     ofile.write("----------------------------------------------\n")
-    response = urllib2.urlopen(url)
-    m = re.findall ( '<span class="coursetitle">(.*?)</span>', response.read(), re.DOTALL)
+    response_buffer = urllib2.urlopen(url).read()
+    dep_name = re.findall('<h1>(.*?)\sCourses', response_buffer, re.DOTALL)
+    m = re.findall ( '<span class="coursetitle">(.*?)</span>', response_buffer, re.DOTALL)
+    ofile.write(dep_name[0])
+    ofile.write("\n\n")
     for ln in m:
+        if ln.find("<span class") > 0:
+            continue
         ofile.write(ln)
         ofile.write("\n\n")
